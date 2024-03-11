@@ -1,6 +1,13 @@
 package repository
 
+import (
+	"github.com/OlenEnkeli/go_todo_pet/dto"
+	"gorm.io/gorm"
+)
+
 type Authorization interface {
+	CreateUser(user dto.User) (dto.User, error)
+	GetUserByLogin(login string) (dto.User, error)
 }
 
 type TodoList interface {
@@ -15,6 +22,8 @@ type Repository struct {
 	TodoItem
 }
 
-func NewRepository() *Repository {
-	return &Repository{}
+func NewRepository(db *gorm.DB) *Repository {
+	return &Repository{
+		Authorization: NewAuthDB(db),
+	}
 }
