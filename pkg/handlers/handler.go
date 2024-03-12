@@ -24,7 +24,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		auth.POST("/login", h.login)
 	}
 
-	lists := router.Group("/lists")
+	lists := router.Group("/lists", h.authNeeded)
 	{
 		lists.POST("/", h.createList)
 		lists.GET("/", h.getLists)

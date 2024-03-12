@@ -8,6 +8,9 @@ import (
 	"github.com/OlenEnkeli/go_todo_pet/dto"
 	"github.com/OlenEnkeli/go_todo_pet/pkg/repositories"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/sirupsen/logrus"
+	"strconv"
+	"time"
 )
 
 type AuthService struct {
@@ -35,7 +38,7 @@ func (srv *AuthService) Login(origin dto.UserLogin) (string, error) {
 		return "", errors.New("unable to login: wrong password")
 	}
 
-	return srv.generateToken(user.Id)
+	return srv.generateToken(user)
 }
 
 func (srv *AuthService) generatePasswordHash(password string) string {
@@ -50,17 +53,20 @@ func (srv *AuthService) checkPassword(password string, hash string) bool {
 	return hashed == hash
 }
 
-func (srv *AuthService) generateToken(id uint) (string, error) {
+func (srv *AuthService) generateToken(user dto.User) (string, error) {
+	claims := jwt.RegisteredClaims{
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(24 * 7 * time.Hour)),
+		IssuedAt:  jwt.NewNumericDate(time.Now()),
+		NotBefore: jwt.NewNumericDate(time.Now()),
+		Subject:   strconv.Itoa(int(user.Id)),
+	}
+
 	token := jwt.NewWithClaims(
 		jwt.SigningMethodHS256,
-		jwt.MapClaims{
-			"sub": string(id),
-		},
+		claims,
 	)
 
-	result, err := token.SignedString(
-		[]byte(configs.Config.Auth.JWTSecretKey),
-	)
+	result, err := token.SignedString([]byte(configs.Config.Auth.JWTSecretKey))
 	if err != nil {
 		return "", errors.New(
 			fmt.Sprintf("unable to login: can`t make JWT token: %s", err),
@@ -68,4 +74,34 @@ func (srv *AuthService) generateToken(id uint) (string, error) {
 	}
 
 	return result, nil
+}
+
+func (srv *AuthService) ParseToken(token string) (uint, error) {
+	parsedToken, err := jwt.Parse(
+		token,
+		func(token *jwt.Token) (interface{}, error) {
+			return []byte(configs.Config.Auth.JWTSecretKey), nil
+		},
+	)
+	if err != nil {
+		return 0, errors.New("wrong JWT token: can`t parse")
+	}
+
+	if !parsedToken.Valid {
+		return 0, errors.New("wrong JWT token: token isn`t valid")
+	}
+
+	id, err := parsedToken.Claims.GetSubject()
+
+	if err != nil {
+		return 0, errors.New("wrong JWT token: no sub field")
+	}
+
+	parsedId, err := strconv.Atoi(id)
+	if err != nil {
+		logrus.Errorf(err.Error())
+		return 0, errors.New("wrong JWT token: id must be integer")
+	}
+
+	return uint(parsedId), nil
 }
