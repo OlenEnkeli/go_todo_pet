@@ -1,15 +1,15 @@
-package handler
+package handlers
 
 import (
-	"github.com/OlenEnkeli/go_todo_pet/pkg/service"
+	"github.com/OlenEnkeli/go_todo_pet/pkg/services"
 	"github.com/gin-gonic/gin"
 )
 
 type Handler struct {
-	services *service.Service
+	services *services.Service
 }
 
-func NewHandler(services *service.Service) *Handler {
+func NewHandler(services *services.Service) *Handler {
 	return &Handler{
 		services: services,
 	}

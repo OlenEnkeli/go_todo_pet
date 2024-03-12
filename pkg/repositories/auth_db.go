@@ -1,8 +1,8 @@
-package repository
+package repositories
 
 import (
 	"github.com/OlenEnkeli/go_todo_pet/dto"
-	"github.com/OlenEnkeli/go_todo_pet/pkg/repository/models"
+	"github.com/OlenEnkeli/go_todo_pet/pkg/repositories/models"
 	"gorm.io/gorm"
 )
 
@@ -33,7 +33,9 @@ func (repo *AuthDB) CreateUser(user dto.User) (dto.User, error) {
 func (repo *AuthDB) GetUserByLogin(login string) (dto.User, error) {
 	var user *models.User
 
-	repo.db.Where("login = ?").Scan(&user)
+	repo.db.
+		Model(&models.User{}).
+		Where("login = ?", login).Scan(&user)
 
 	return dto.User{
 		Id:       user.Id,

@@ -1,4 +1,4 @@
-package service
+package services
 
 import (
 	"crypto/sha256"
@@ -6,15 +6,15 @@ import (
 	"fmt"
 	"github.com/OlenEnkeli/go_todo_pet/configs"
 	"github.com/OlenEnkeli/go_todo_pet/dto"
-	"github.com/OlenEnkeli/go_todo_pet/pkg/repository"
+	"github.com/OlenEnkeli/go_todo_pet/pkg/repositories"
 	"github.com/golang-jwt/jwt/v5"
 )
 
 type AuthService struct {
-	repo repository.Authorization
+	repo repositories.Authorization
 }
 
-func NewAuthService(repo repository.Authorization) *AuthService {
+func NewAuthService(repo repositories.Authorization) *AuthService {
 	return &AuthService{repo}
 }
 
@@ -52,15 +52,19 @@ func (srv *AuthService) checkPassword(password string, hash string) bool {
 
 func (srv *AuthService) generateToken(id uint) (string, error) {
 	token := jwt.NewWithClaims(
-		jwt.SigningMethodES256,
+		jwt.SigningMethodHS256,
 		jwt.MapClaims{
 			"sub": string(id),
 		},
 	)
 
-	result, err := token.SignedString(configs.Config.Auth.JWTSecretKey)
+	result, err := token.SignedString(
+		[]byte(configs.Config.Auth.JWTSecretKey),
+	)
 	if err != nil {
-		return "", errors.New("unable to login: can`t make JWT token")
+		return "", errors.New(
+			fmt.Sprintf("unable to login: can`t make JWT token: %s", err),
+		)
 	}
 
 	return result, nil

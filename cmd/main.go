@@ -3,9 +3,9 @@ package main
 import (
 	todo "github.com/OlenEnkeli/go_todo_pet"
 	"github.com/OlenEnkeli/go_todo_pet/configs"
-	"github.com/OlenEnkeli/go_todo_pet/pkg/handler"
-	"github.com/OlenEnkeli/go_todo_pet/pkg/repository"
-	"github.com/OlenEnkeli/go_todo_pet/pkg/service"
+	"github.com/OlenEnkeli/go_todo_pet/pkg/handlers"
+	"github.com/OlenEnkeli/go_todo_pet/pkg/repositories"
+	"github.com/OlenEnkeli/go_todo_pet/pkg/services"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"slices"
@@ -23,11 +23,11 @@ func main() {
 		logrus.SetFormatter(&logrus.JSONFormatter{})
 	}
 
-	db := repository.GetDBConnection(&configs.Config)
+	db := repositories.GetDBConnection(&configs.Config)
 
-	repos := repository.NewRepository(db)
-	services := service.NewService(repos)
-	handlers := handler.NewHandler(services)
+	repos := repositories.NewRepository(db)
+	services := services.NewService(repos)
+	handlers := handlers.NewHandler(services)
 
 	switch configs.Config.Common.Mode {
 	case "dev":

@@ -1,4 +1,4 @@
-package repository
+package repositories
 
 import (
 	"github.com/OlenEnkeli/go_todo_pet/configs"

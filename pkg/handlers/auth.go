@@ -1,8 +1,8 @@
-package handler
+package handlers
 
 import (
 	"github.com/OlenEnkeli/go_todo_pet/dto"
-	"github.com/OlenEnkeli/go_todo_pet/pkg/handler/schemas"
+	"github.com/OlenEnkeli/go_todo_pet/pkg/handlers/schemas"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -38,7 +38,10 @@ func (h *Handler) login(ctx *gin.Context) {
 	token, err := h.services.Login(input)
 	if err != nil {
 		RaiseErrorResponse(ctx, http.StatusUnauthorized, err.Error())
+		return
 	}
 
-	println(token)
+	ctx.JSON(http.StatusOK, map[string]interface{}{
+		"access_token": token,
+	})
 }

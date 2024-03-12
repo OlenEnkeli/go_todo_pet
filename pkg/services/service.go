@@ -1,8 +1,8 @@
-package service
+package services
 
 import (
 	"github.com/OlenEnkeli/go_todo_pet/dto"
-	"github.com/OlenEnkeli/go_todo_pet/pkg/repository"
+	"github.com/OlenEnkeli/go_todo_pet/pkg/repositories"
 )
 
 type Authorization interface {
@@ -22,7 +22,7 @@ type Service struct {
 	TodoItem
 }
 
-func NewService(repos *repository.Repository) *Service {
+func NewService(repos *repositories.Repository) *Service {
 	return &Service{
 		Authorization: NewAuthService(repos),
 	}
