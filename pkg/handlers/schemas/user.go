@@ -13,7 +13,7 @@ type UserCreateSchema struct {
 }
 
 type UserReturnSchema struct {
-	Id uint `json:"id"`
+	Id int `json:"id"`
 	UserBaseSchema
 }
 

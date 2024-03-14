@@ -23,11 +23,7 @@ func (repo *AuthDB) CreateUser(user dto.User) (dto.User, error) {
 
 	result := repo.db.Create(&newUser)
 
-	return dto.User{
-		Id:    newUser.Id,
-		Login: newUser.Login,
-		Name:  user.Name,
-	}, result.Error
+	return newUser.ToDTO(), result.Error
 }
 
 func (repo *AuthDB) GetUserByLogin(login string) (dto.User, error) {
@@ -37,10 +33,5 @@ func (repo *AuthDB) GetUserByLogin(login string) (dto.User, error) {
 		Model(&models.User{}).
 		Where("login = ?", login).Scan(&user)
 
-	return dto.User{
-		Id:       user.Id,
-		Login:    user.Login,
-		Name:     user.Name,
-		Password: user.Password,
-	}, nil
+	return user.ToDTO(), nil
 }
