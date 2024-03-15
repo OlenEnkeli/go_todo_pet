@@ -26,11 +26,11 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	lists := router.Group("/lists", h.authNeeded)
 	{
-		lists.POST("/", h.createList)
-		lists.GET("/", h.getLists)
-		lists.GET("/:id", h.getList)
-		lists.PATCH("/:id", h.updateList)
-		lists.DELETE("/:id", h.deleteList)
+		lists.POST("/", h.createTodoList)
+		lists.GET("/", h.getTodoLists)
+		lists.GET("/:id", h.getTodoList)
+		lists.PATCH("/:id", h.updateTodoList)
+		lists.DELETE("/:id", h.deleteTodoList)
 
 		items := lists.Group(":id/items")
 		{

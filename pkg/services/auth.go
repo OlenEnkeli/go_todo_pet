@@ -76,7 +76,7 @@ func (srv *AuthService) generateToken(user dto.User) (string, error) {
 	return result, nil
 }
 
-func (srv *AuthService) ParseToken(token string) (uint, error) {
+func (srv *AuthService) ParseToken(token string) (int, error) {
 	parsedToken, err := jwt.Parse(
 		token,
 		func(token *jwt.Token) (interface{}, error) {
@@ -103,5 +103,5 @@ func (srv *AuthService) ParseToken(token string) (uint, error) {
 		return 0, errors.New("wrong JWT token: id must be integer")
 	}
 
-	return uint(parsedId), nil
+	return parsedId, nil
 }

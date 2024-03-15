@@ -21,17 +21,18 @@ func (repo *AuthDB) CreateUser(user dto.User) (dto.User, error) {
 		Name:     user.Name,
 	}
 
-	result := repo.db.Create(&newUser)
+	err := repo.db.Create(&newUser)
 
-	return newUser.ToDTO(), result.Error
+	return newUser.ToDTO(), err.Error
 }
 
 func (repo *AuthDB) GetUserByLogin(login string) (dto.User, error) {
 	var user *models.User
 
-	repo.db.
+	err := repo.db.
 		Model(&models.User{}).
-		Where("login = ?", login).Scan(&user)
+		Where("login = ?", login).
+		Scan(&user)
 
-	return user.ToDTO(), nil
+	return user.ToDTO(), err.Error
 }

@@ -11,6 +11,11 @@ type Authorization interface {
 }
 
 type TodoList interface {
+	GetTodoList(id int) (dto.TodoList, error)
+	GetTodoLists(userId int) ([]dto.TodoList, error)
+	CreateTodoList(todoList dto.TodoList) (dto.TodoList, error)
+	RemoveTodoList(id int) error
+	UpdateTodoList(id int, todoList dto.TodoList) (dto.TodoList, error)
 }
 
 type TodoItem interface {
@@ -25,5 +30,6 @@ type Repository struct {
 func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthDB(db),
+		TodoList:      NewTodoListDB(db),
 	}
 }

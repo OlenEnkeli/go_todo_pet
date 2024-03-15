@@ -25,10 +25,10 @@ func (schema *UserCreateSchema) ToDTO() dto.User {
 	}
 }
 
-func (schema *UserReturnSchema) FromDTO(dto dto.User) {
-	schema.Id = dto.Id
-	schema.Login = dto.Login
-	schema.Name = dto.Name
+func (schema *UserReturnSchema) FromDTO(input dto.User) {
+	schema.Id = input.Id
+	schema.Login = input.Login
+	schema.Name = input.Name
 }
 
 type LoginSchema struct {
