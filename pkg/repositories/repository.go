@@ -11,7 +11,7 @@ type Authorization interface {
 }
 
 type TodoList interface {
-	GetTodoList(id int) (dto.TodoList, error)
+	GetTodoList(userId int, id int) (dto.TodoList, error)
 	GetTodoLists(userId int) ([]dto.TodoList, error)
 	CreateTodoList(todoList dto.TodoList) (dto.TodoList, error)
 	RemoveTodoList(id int) error

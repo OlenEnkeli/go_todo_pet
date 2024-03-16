@@ -18,8 +18,8 @@ func (srv *TodoListService) GetTodoLists(userId int) ([]dto.TodoList, error) {
 	return srv.repo.GetTodoLists(userId)
 }
 
-func (srv *TodoListService) GetTodoList(id int) (dto.TodoList, error) {
-	return srv.repo.GetTodoList(id)
+func (srv *TodoListService) GetTodoList(userId int, id int) (dto.TodoList, error) {
+	return srv.repo.GetTodoList(userId, id)
 }
 
 func (srv *TodoListService) UpdateTodoList(id int, todoList dto.TodoList) (dto.TodoList, error) {

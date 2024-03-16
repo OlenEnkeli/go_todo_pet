@@ -42,13 +42,16 @@ func (repo TodoListDB) GetTodoLists(userId int) ([]dto.TodoList, error) {
 	return resultTodoLists, result.Error
 }
 
-func (repo TodoListDB) GetTodoList(id int) (dto.TodoList, error) {
+func (repo TodoListDB) GetTodoList(userId int, id int) (dto.TodoList, error) {
 	var todoList *models.TodoList
 
 	err := repo.db.
 		Model(&models.TodoList{}).
+		Where("user_id = ?", userId).
 		Where("id = ?", id).
-		Scan(&todoList)
+		First(&todoList)
+
+	println(todoList)
 
 	return todoList.ToDTO(), err.Error
 }
