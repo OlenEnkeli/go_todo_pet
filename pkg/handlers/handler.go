@@ -31,6 +31,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		lists.GET("/:id", h.getTodoList)
 		lists.PATCH("/:id", h.updateTodoList)
 		lists.DELETE("/:id", h.deleteTodoList)
+		lists.PATCH("/:id/order/:order", h.changeTodoListOrder)
 
 		items := lists.Group(":id/items")
 		{

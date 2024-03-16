@@ -3,18 +3,14 @@ package dto
 import "time"
 
 type TodoItem struct {
-	Id          uint
+	Id          int
+	ListId      int
 	Title       string
 	Description string
+	Order       int
 	IsDone      bool
 	DoneUntil   time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   time.Time
-}
-
-type ListToItem struct {
-	Id     uint
-	ListId int
-	ItemId int
 }

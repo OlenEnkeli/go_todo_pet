@@ -11,6 +11,11 @@ type IdUriParams struct {
 	Id int `uri:"id" binding:"required"`
 }
 
+type IdOrderIdUriParams struct {
+	IdUriParams
+	Order int `uri:"order" binding:"required"`
+}
+
 func (h *Handler) createTodoList(ctx *gin.Context) {
 	var input schemas.TodoListCreateSchema
 
@@ -27,7 +32,6 @@ func (h *Handler) createTodoList(ctx *gin.Context) {
 
 	var result schemas.TodoListReturnSchema
 	result.FromDTO(todoList)
-
 	ctx.JSON(http.StatusOK, result)
 }
 
@@ -72,14 +76,77 @@ func (h *Handler) getTodoList(ctx *gin.Context) {
 
 	var result schemas.TodoListReturnSchema
 	result.FromDTO(todoList)
-
 	ctx.JSON(http.StatusOK, result)
 }
 
 func (h *Handler) updateTodoList(ctx *gin.Context) {
+	var uriParams IdUriParams
+	err := ctx.ShouldBindUri(&uriParams)
+	if err != nil {
+		RaiseErrorResponse(ctx, http.StatusUnprocessableEntity, "Missing uri params id")
+		return
+	}
 
+	var input schemas.TodoListUpdateSchema
+
+	if err := ctx.ShouldBindJSON(&input); err != nil {
+		RaiseErrorResponse(ctx, http.StatusUnprocessableEntity, err.Error())
+		return
+	}
+
+	updatedDTO := input.ToDTO()
+	updatedDTO.UserId = ctx.GetInt("userId")
+
+	todoList, err := h.services.UpdateTodoList(uriParams.Id, updatedDTO)
+	if err != nil {
+		RaiseErrorResponse(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var result schemas.TodoListReturnSchema
+	result.FromDTO(todoList)
+	ctx.JSON(http.StatusOK, result)
+}
+
+func (h *Handler) changeTodoListOrder(ctx *gin.Context) {
+	var uriParams IdOrderIdUriParams
+	err := ctx.ShouldBindUri(&uriParams)
+	if err != nil {
+		RaiseErrorResponse(ctx, http.StatusUnprocessableEntity, "Required uri params id and order")
+		return
+	}
+
+	todoList, err := h.services.ChangeTodoListOrder(
+		ctx.GetInt("userId"),
+		uriParams.Id,
+		uriParams.Order,
+	)
+	if err != nil {
+		RaiseErrorResponse(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var result schemas.TodoListReturnSchema
+	result.FromDTO(todoList)
+	ctx.JSON(http.StatusOK, result)
 }
 
 func (h *Handler) deleteTodoList(ctx *gin.Context) {
+	var uriParams IdUriParams
+	err := ctx.ShouldBindUri(&uriParams)
+	if err != nil {
+		RaiseErrorResponse(ctx, http.StatusUnprocessableEntity, "Missing uri params id")
+		return
+	}
 
+	if err := h.services.RemoveTodoList(ctx.GetInt("userId"), uriParams.Id); err != nil {
+		RaiseErrorResponse(
+			ctx,
+			http.StatusNotFound,
+			fmt.Sprintf("Can`t delete todo list with id %v", uriParams.Id),
+		)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, map[string]string{"success": "ok"})
 }

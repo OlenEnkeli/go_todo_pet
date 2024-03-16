@@ -26,8 +26,12 @@ func (srv *TodoListService) UpdateTodoList(id int, todoList dto.TodoList) (dto.T
 	return srv.repo.UpdateTodoList(id, todoList)
 }
 
-func (srv *TodoListService) RemoveTodoList(id int) error {
-	return srv.repo.RemoveTodoList(id)
+func (srv *TodoListService) RemoveTodoList(userId int, id int) error {
+	return srv.repo.RemoveTodoList(userId, id)
+}
+
+func (srv *TodoListService) ChangeTodoListOrder(userId int, id int, order int) (dto.TodoList, error) {
+	return srv.repo.ChangeTodoListOrder(userId, id, order)
 }
 
 func NewTodoListService(repo repositories.TodoList) *TodoListService {

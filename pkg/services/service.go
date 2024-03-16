@@ -12,11 +12,12 @@ type Authorization interface {
 }
 
 type TodoList interface {
+	CreateTodoList(userId int, todoList dto.TodoList) (dto.TodoList, error)
 	GetTodoList(userId int, id int) (dto.TodoList, error)
 	GetTodoLists(userId int) ([]dto.TodoList, error)
-	CreateTodoList(userId int, todoList dto.TodoList) (dto.TodoList, error)
-	RemoveTodoList(id int) error
+	RemoveTodoList(userId int, id int) error
 	UpdateTodoList(id int, todoList dto.TodoList) (dto.TodoList, error)
+	ChangeTodoListOrder(userId, id int, order int) (dto.TodoList, error)
 }
 
 type TodoItem interface {
