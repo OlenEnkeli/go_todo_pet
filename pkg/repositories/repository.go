@@ -20,6 +20,12 @@ type TodoList interface {
 }
 
 type TodoItem interface {
+	CreateTodoItem(userId int, todoItem dto.TodoItem) (dto.TodoItem, error)
+	GetTodoItem(userId int, todoListId int, id int) (dto.TodoItem, error)
+	GetTodoItems(userId int, todoListId int) ([]dto.TodoItem, error)
+	UpdateTodoItem(userId int, id int, todoItem dto.TodoItem) (dto.TodoItem, error)
+	ChangeTodoItemOrder(userId, todoListId int, id int, order int) (dto.TodoItem, error)
+	RemoveTodoItem(userId int, todoListId int, id int) error
 }
 
 type Repository struct {
@@ -32,5 +38,6 @@ func NewRepository(db *gorm.DB) *Repository {
 	return &Repository{
 		Authorization: NewAuthDB(db),
 		TodoList:      NewTodoListDB(db),
+		TodoItem:      NewTodoItemDB(db),
 	}
 }

@@ -29,10 +29,10 @@ func (repo *AuthDB) CreateUser(user dto.User) (dto.User, error) {
 func (repo *AuthDB) GetUserByLogin(login string) (dto.User, error) {
 	var user *models.User
 
-	err := repo.db.
+	result := repo.db.
 		Model(&models.User{}).
 		Where("login = ?", login).
-		Scan(&user)
+		First(&user)
 
-	return user.ToDTO(), err.Error
+	return user.ToDTO(), result.Error
 }

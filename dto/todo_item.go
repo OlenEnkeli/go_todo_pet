@@ -9,7 +9,7 @@ type TodoItem struct {
 	Description string
 	Order       int
 	IsDone      bool
-	DoneUntil   time.Time
+	DoneUntil   *time.Time
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 	DeletedAt   time.Time

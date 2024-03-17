@@ -1,3 +1,3 @@
-DROP INDEX list_order_index;
+DROP INDEX user_login_index;
 
 DROP TABLE users;

@@ -6,10 +6,9 @@ import (
 
 type User struct {
 	BaseModel
-	Login     string     `gorm:"index:user_login_index,unique; not null"`
-	Name      string     `gorm:"not null"`
-	Password  string     `gorm:"not null"`
-	TodoLists []TodoList `gorm:"foreignKey:UserId"`
+	Login    string `gorm:"index: user_login_index, unique; not null"`
+	Name     string `gorm:"not null"`
+	Password string `gorm:"not null"`
 }
 
 func (user *User) ToDTO() dto.User {

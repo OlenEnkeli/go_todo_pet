@@ -5,8 +5,7 @@ CREATE TABLE todo_lists(
     description text,
     list_order int,
     created_at timestamp NOT NULL,
-    updated_at timestamp,
-    deleted_at timestamp
+    updated_at timestamp
 );
 
 CREATE INDEX list_order_index ON todo_lists(list_order int4_ops);

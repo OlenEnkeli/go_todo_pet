@@ -7,17 +7,18 @@ import (
 	"net/http"
 )
 
-type IdUriParams struct {
+type ListIdUriParams struct {
 	Id int `uri:"id" binding:"required"`
 }
 
-type IdOrderIdUriParams struct {
-	IdUriParams
+type ListIdOrderIdUriParams struct {
+	ListIdUriParams
 	Order int `uri:"order" binding:"required"`
 }
 
 func (h *Handler) createTodoList(ctx *gin.Context) {
 	var input schemas.TodoListCreateSchema
+	var result schemas.TodoListReturnSchema
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		RaiseErrorResponse(ctx, http.StatusUnprocessableEntity, err.Error())
@@ -30,20 +31,18 @@ func (h *Handler) createTodoList(ctx *gin.Context) {
 		return
 	}
 
-	var result schemas.TodoListReturnSchema
 	result.FromDTO(todoList)
 	ctx.JSON(http.StatusOK, result)
 }
 
 func (h *Handler) getTodoLists(ctx *gin.Context) {
 	todoLists, err := h.services.GetTodoLists(ctx.GetInt("userId"))
+	var result schemas.TodoListsReturnSchema
 
 	if err != nil {
 		RaiseErrorResponse(ctx, http.StatusNotFound, err.Error())
 		return
 	}
-
-	var result schemas.TodoListsReturnSchema
 
 	for _, todoList := range todoLists {
 		var todoListSchema schemas.TodoListReturnSchema
@@ -57,7 +56,9 @@ func (h *Handler) getTodoLists(ctx *gin.Context) {
 }
 
 func (h *Handler) getTodoList(ctx *gin.Context) {
-	var uriParams IdUriParams
+	var uriParams ListIdUriParams
+	var result schemas.TodoListReturnSchema
+
 	err := ctx.ShouldBindUri(&uriParams)
 	if err != nil {
 		RaiseErrorResponse(ctx, http.StatusUnprocessableEntity, "Missing uri params id")
@@ -74,20 +75,20 @@ func (h *Handler) getTodoList(ctx *gin.Context) {
 		return
 	}
 
-	var result schemas.TodoListReturnSchema
 	result.FromDTO(todoList)
 	ctx.JSON(http.StatusOK, result)
 }
 
 func (h *Handler) updateTodoList(ctx *gin.Context) {
-	var uriParams IdUriParams
+	var uriParams ListIdUriParams
+	var input schemas.TodoListUpdateSchema
+	var result schemas.TodoListReturnSchema
+
 	err := ctx.ShouldBindUri(&uriParams)
 	if err != nil {
 		RaiseErrorResponse(ctx, http.StatusUnprocessableEntity, "Missing uri params id")
 		return
 	}
-
-	var input schemas.TodoListUpdateSchema
 
 	if err := ctx.ShouldBindJSON(&input); err != nil {
 		RaiseErrorResponse(ctx, http.StatusUnprocessableEntity, err.Error())
@@ -103,16 +104,17 @@ func (h *Handler) updateTodoList(ctx *gin.Context) {
 		return
 	}
 
-	var result schemas.TodoListReturnSchema
 	result.FromDTO(todoList)
 	ctx.JSON(http.StatusOK, result)
 }
 
 func (h *Handler) changeTodoListOrder(ctx *gin.Context) {
-	var uriParams IdOrderIdUriParams
+	var uriParams ListIdOrderIdUriParams
+	var result schemas.TodoListReturnSchema
+
 	err := ctx.ShouldBindUri(&uriParams)
 	if err != nil {
-		RaiseErrorResponse(ctx, http.StatusUnprocessableEntity, "Required uri params id and order")
+		RaiseErrorResponse(ctx, http.StatusUnprocessableEntity, "Required uri params id / order")
 		return
 	}
 
@@ -126,13 +128,13 @@ func (h *Handler) changeTodoListOrder(ctx *gin.Context) {
 		return
 	}
 
-	var result schemas.TodoListReturnSchema
 	result.FromDTO(todoList)
 	ctx.JSON(http.StatusOK, result)
 }
 
 func (h *Handler) deleteTodoList(ctx *gin.Context) {
-	var uriParams IdUriParams
+	var uriParams ListIdUriParams
+
 	err := ctx.ShouldBindUri(&uriParams)
 	if err != nil {
 		RaiseErrorResponse(ctx, http.StatusUnprocessableEntity, "Missing uri params id")

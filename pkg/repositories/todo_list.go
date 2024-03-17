@@ -15,7 +15,7 @@ func (repo TodoListDB) CreateTodoList(todoList dto.TodoList) (dto.TodoList, erro
 
 	row := repo.db.
 		Model(&models.TodoList{}).
-		Select("max(list_order) as max_order").
+		Select("MAX(list_order) as max_order").
 		Row()
 
 	err := row.Scan(&maxOrder)
@@ -60,13 +60,13 @@ func (repo TodoListDB) GetTodoLists(userId int) ([]dto.TodoList, error) {
 func (repo TodoListDB) getTodoList(userId int, id int) (*models.TodoList, error) {
 	var todoList *models.TodoList
 
-	err := repo.db.
+	result := repo.db.
 		Model(&models.TodoList{}).
 		Where("user_id = ?", userId).
 		Where("id = ?", id).
 		First(&todoList)
 
-	return todoList, err.Error
+	return todoList, result.Error
 }
 
 func (repo TodoListDB) GetTodoList(userId int, id int) (dto.TodoList, error) {
@@ -87,16 +87,6 @@ func (repo TodoListDB) UpdateTodoList(id int, todoList dto.TodoList) (dto.TodoLi
 	return updatedTodoList.ToDTO(), result.Error
 }
 
-func (repo TodoListDB) RemoveTodoList(userId int, id int) error {
-	todoList, err := repo.getTodoList(userId, id)
-	if err != nil {
-		return err
-	}
-
-	repo.db.Delete(&todoList)
-	return nil
-}
-
 func (repo TodoListDB) ChangeTodoListOrder(userId, id int, order int) (dto.TodoList, error) {
 	todoList, err := repo.getTodoList(userId, id)
 	if err != nil {
@@ -111,8 +101,6 @@ func (repo TodoListDB) ChangeTodoListOrder(userId, id int, order int) (dto.TodoL
 				"list_order",
 				gorm.Expr("list_order - ?", 1),
 			)
-
-		println(result.RowsAffected)
 
 		if result.Error != nil {
 			return result.Error
@@ -130,6 +118,16 @@ func (repo TodoListDB) ChangeTodoListOrder(userId, id int, order int) (dto.TodoL
 	})
 
 	return todoList.ToDTO(), err
+}
+
+func (repo TodoListDB) RemoveTodoList(userId int, id int) error {
+	todoList, err := repo.getTodoList(userId, id)
+	if err != nil {
+		return err
+	}
+
+	repo.db.Unscoped().Delete(&todoList)
+	return nil
 }
 
 func NewTodoListDB(db *gorm.DB) *TodoListDB {
