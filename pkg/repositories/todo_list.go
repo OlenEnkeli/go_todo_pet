@@ -94,12 +94,30 @@ func (repo TodoListDB) ChangeTodoListOrder(userId, id int, order int) (dto.TodoL
 	}
 
 	err = repo.db.Transaction(func(trans *gorm.DB) error {
+		if todoList.Order == order {
+			return nil
+		}
+
+		var updateFrom int
+		var updateUntil int
+		var updateExpr string
+
+		if todoList.Order < order {
+			updateFrom = todoList.Order
+			updateUntil = order
+			updateExpr = "list_order - ?"
+		} else {
+			updateFrom = order
+			updateUntil = todoList.Order
+			updateExpr = "list_order + ?"
+		}
+
 		result := trans.
 			Model(&models.TodoList{}).
-			Where("list_order BETWEEN ? AND ?", todoList.Order, order).
+			Where("list_order BETWEEN ? AND ?", updateFrom, updateUntil).
 			UpdateColumn(
 				"list_order",
-				gorm.Expr("list_order - ?", 1),
+				gorm.Expr(updateExpr, 1),
 			)
 
 		if result.Error != nil {

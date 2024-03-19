@@ -9,6 +9,7 @@ type Authorization interface {
 	CreateUser(user dto.User) (dto.User, error)
 	Login(origin dto.UserLogin) (string, error)
 	ParseToken(token string) (int, error)
+	GetCurrentUser(userId int) (dto.User, error)
 }
 
 type TodoList interface {

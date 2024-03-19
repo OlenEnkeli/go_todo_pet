@@ -136,12 +136,30 @@ func (repo TodoItemDB) ChangeTodoItemOrder(userId, todoListId int, id int, order
 	}
 
 	err = repo.db.Transaction(func(trans *gorm.DB) error {
+		if todoItem.Order == order {
+			return nil
+		}
+
+		var updateFrom int
+		var updateUntil int
+		var updateExpr string
+
+		if todoItem.Order < order {
+			updateFrom = todoItem.Order
+			updateUntil = order
+			updateExpr = "item_order - ?"
+		} else {
+			updateFrom = order
+			updateUntil = todoItem.Order
+			updateExpr = "item_order + ?"
+		}
+
 		result := trans.
 			Model(&models.TodoItem{}).
-			Where("item_order BETWEEN ? AND ?", todoItem.Order, order).
+			Where("item_order BETWEEN ? AND ?", updateFrom, updateUntil).
 			UpdateColumn(
 				"item_order",
-				gorm.Expr("item_order - ?", 1),
+				gorm.Expr(updateExpr, 1),
 			)
 
 		if result.Error != nil {
@@ -151,7 +169,6 @@ func (repo TodoItemDB) ChangeTodoItemOrder(userId, todoListId int, id int, order
 		todoItem.Order = order
 
 		result = trans.Save(&todoItem)
-
 		if result.Error != nil {
 			return result.Error
 		}

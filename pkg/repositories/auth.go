@@ -10,6 +10,17 @@ type AuthDB struct {
 	db *gorm.DB
 }
 
+func (repo *AuthDB) GetCurrentUser(userId int) (dto.User, error) {
+	var user *models.User
+
+	result := repo.db.
+		Model(&user).
+		Where("id = ?", userId).
+		First(&user)
+
+	return user.ToDTO(), result.Error
+}
+
 func NewAuthDB(db *gorm.DB) *AuthDB {
 	return &AuthDB{db}
 }

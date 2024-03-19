@@ -23,7 +23,6 @@ func (h *Handler) signUp(ctx *gin.Context) {
 
 	var result schemas.UserReturnSchema
 	result.FromDTO(user)
-
 	ctx.JSON(http.StatusOK, result)
 }
 
@@ -44,4 +43,16 @@ func (h *Handler) login(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, map[string]interface{}{
 		"access_token": token,
 	})
+}
+
+func (h *Handler) GetCurrentUser(ctx *gin.Context) {
+	user, err := h.services.GetCurrentUser(ctx.GetInt("userId"))
+	if err != nil {
+		RaiseErrorResponse(ctx, http.StatusBadRequest, err.Error())
+		return
+	}
+
+	var result schemas.UserReturnSchema
+	result.FromDTO(user)
+	ctx.JSON(http.StatusOK, result)
 }

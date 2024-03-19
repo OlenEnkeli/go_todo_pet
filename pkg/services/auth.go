@@ -41,6 +41,10 @@ func (srv *AuthService) Login(origin dto.UserLogin) (string, error) {
 	return srv.generateToken(user)
 }
 
+func (srv *AuthService) GetCurrentUser(userId int) (dto.User, error) {
+	return srv.repo.GetCurrentUser(userId)
+}
+
 func (srv *AuthService) generatePasswordHash(password string) string {
 	hash := sha256.New()
 	hash.Write([]byte(password))
