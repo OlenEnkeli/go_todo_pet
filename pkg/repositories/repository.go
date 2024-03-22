@@ -18,6 +18,7 @@ type TodoList interface {
 	RemoveTodoList(userId int, id int) error
 	UpdateTodoList(id int, todoList dto.TodoList) (dto.TodoList, error)
 	ChangeTodoListOrder(userId, id int, order int) (dto.TodoList, error)
+	GetTodoListsStatistics(userId int) (dto.TodoListStatistic, map[int]*dto.TodoListStatistic, error)
 }
 
 type TodoItem interface {

@@ -34,6 +34,10 @@ func (srv *TodoListService) ChangeTodoListOrder(userId int, id int, order int) (
 	return srv.repo.ChangeTodoListOrder(userId, id, order)
 }
 
+func (srv *TodoListService) GetTodoListsStatistics(userId int) (dto.TodoListStatistic, map[int]*dto.TodoListStatistic, error) {
+	return srv.repo.GetTodoListsStatistics(userId)
+}
+
 func NewTodoListService(repo repositories.TodoList) *TodoListService {
 	return &TodoListService{repo}
 }

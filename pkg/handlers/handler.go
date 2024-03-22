@@ -31,6 +31,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	{
 		lists.POST("/", h.createTodoList)
 		lists.GET("/", h.getTodoLists)
+		lists.GET("/statistics", h.getStatistics)
 		lists.GET("/:id", h.getTodoList)
 		lists.PATCH("/:id", h.updateTodoList)
 		lists.DELETE("/:id", h.deleteTodoList)

@@ -152,3 +152,20 @@ func (h *Handler) deleteTodoList(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, map[string]string{"success": "ok"})
 }
+
+func (h *Handler) getStatistics(ctx *gin.Context) {
+	var result schemas.TodoListStatisticReturnSchema
+
+	statistic, statistics, err := h.services.GetTodoListsStatistics(ctx.GetInt("userId"))
+	if err != nil {
+		RaiseErrorResponse(
+			ctx,
+			http.StatusNotFound,
+			fmt.Sprintf("Can`t get statistic: %s", err.Error()),
+		)
+		return
+	}
+
+	result.FromDTOs(statistic, statistics)
+	ctx.JSON(http.StatusOK, result)
+}

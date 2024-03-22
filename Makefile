@@ -16,4 +16,3 @@ migration_up:
 
 migration_down:
 	migrate -path ./migrations -database ${postgres_uri} down 1
-
