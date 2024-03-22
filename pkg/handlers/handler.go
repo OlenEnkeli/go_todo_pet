@@ -18,6 +18,8 @@ func NewHandler(services *services.Service) *Handler {
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.New()
 
+	router.Use(CORSMiddleware())
+
 	router.POST("/users", h.signUp)
 	currentUser := router.Group("/users/current", h.authNeeded)
 	{
